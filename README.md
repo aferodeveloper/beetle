@@ -2,12 +2,11 @@ beetle
 
 Version 1.0.199
 
-
 Welcome
 
-beetle is a daemon that provides the interface between the Linux “BlueZ” Bluetooth(tm) package and the Afero Hub Software.
+beetle is a daemon that provides the interface between the Linux “BlueZ” Bluetooth(tm) package and the Afero Software Hub .
 
-The Afero Hub Software is functionally identical to the code included in Afero's mobile applications, and Beetle provides a standard interface for that code to use to communicate with the Linux Bluetooth(tm) stack in the same manner it communicates on other platforms.
+The Afero Software Hub  is functionally identical to the code included in Afero's mobile applications, and Beetle provides a standard interface for that code to use to communicate with the Linux Bluetooth(tm) stack in the same manner it communicates on other platforms.
 
 It is released under The MIT License. See the accompanying LICENSE file for more details.
 
