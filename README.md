@@ -18,8 +18,6 @@ This software has been tested on a Raspberry Pi® 3 and a Raspberry Pi Zero (wit
 --------------------------
 Build instructions for this software will be added in the near future.
 
-[link1]: http://developer.afero.io/docs/en/?target=StandaloneHub.htm†
-
-
-
 Copyright Afero, Inc. 2017
+
+[link1]: http://developer.afero.io/docs/en/?target=StandaloneHub.htm†
