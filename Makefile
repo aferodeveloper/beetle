@@ -26,4 +26,4 @@ clean:
 
 install:
 	-/usr/bin/install -s --mode=755 beetle $(INSTALL_PATH)/bin/
-	-/usr/bin/install --mode=644 beetle.1 $(INSTALL_PATH)/share/man/man1/
+	-/usr/bin/install --mode=444 beetle.1 $(INSTALL_PATH)/share/man/man1/
