@@ -23,6 +23,9 @@ To build **beetle** on a Raspberry Pi, you will need to install the libbluetooth
 
 To compile, simply run "make". To install **beetle** to your system, run "sudo make install".
 
+For questions or assistance with **beetle**, please visit the [Afero Developer Forums][link2].
+
 Copyright Afero, Inc. 2017
 
 [link1]: http://developer.afero.io/docs/en/?target=StandaloneHub.htm†
+[link2]: http://forum.afero.io/
