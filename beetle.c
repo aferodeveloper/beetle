@@ -16,7 +16,6 @@
  * limitations under the License.
  *
  *******************************************************************************/
-
 #include <errno.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -196,7 +195,6 @@ static int hci_connect(int devid)
     /* set passive scanning with a five second timeout */
 	if (hci_le_set_scan_parameters(fd, 0, htobs(interval), htobs(window), 0, 0, htobs(SET_SCAN_TIMEOUT)) < 0) {
         syslog(LOG_ERR, "hci_le_set_scan_parameters failed:err=%s", strerror(errno));
-        close(fd);
         return -1;
     }
 
@@ -205,7 +203,6 @@ static int hci_connect(int devid)
 
     if (res < 0) {
         log_failure("hci_connect_set_scan_enabled");
-        close(fd);
         return -1;
     } else {
         return fd;

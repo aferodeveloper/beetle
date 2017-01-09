@@ -16,7 +16,6 @@
  * limitations under the License.
  *
  *******************************************************************************/
-
 #include <syslog.h>
 #include <string.h>
 #include <errno.h>
@@ -131,13 +130,11 @@ kattribute_t *dl_find_attr(device_info_t *di, int attr)
     kattribute_t *ka;
 
     if (di == NULL) {
-        syslog(LOG_ERR,"di == NULL");
         return NULL;
     }
 
     ka = di->attributes;
     if (ka == NULL) {
-        syslog(LOG_ERR,"ka == NULL");
         return NULL;
     }
 
@@ -148,7 +145,6 @@ kattribute_t *dl_find_attr(device_info_t *di, int attr)
         ka++;
     }
 
-    syslog(LOG_ERR,"attr %d not found", attr);
     return NULL;
 }
 

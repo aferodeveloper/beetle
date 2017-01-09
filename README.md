@@ -1,7 +1,7 @@
 Afero Beetle Library
 ====================
 
-*Version 1.0.199*
+*Version 1.0.221*
 
 **Beetle** is a daemon that provides the interface between the Linux “BlueZ” Bluetooth® package and the Afero Hub Software.
 
@@ -16,7 +16,12 @@ This software has been tested on a Raspberry Pi® 3 and a Raspberry Pi Zero (wit
 
 ### Build and Installation
 --------------------------
-Build instructions for this software will be added in the near future.
+
+**beetle** is a very straightforward daemon with few build requirements.
+
+To build **beetle** on a Raspberry Pi, you will need to install the libbluetooth-dev package to install the required C headers. Run "sudo apt-get install libbluetooth-dev" and install that package and it's dependencies.
+
+To compile, simply run "make". To install **beetle** to your system, run "sudo make install".
 
 Copyright Afero, Inc. 2017
 
