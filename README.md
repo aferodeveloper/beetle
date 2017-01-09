@@ -27,5 +27,5 @@ For questions or assistance with **beetle**, please visit the [Afero Developer F
 
 Copyright Afero, Inc. 2017
 
-[link1]: http://developer.afero.io/docs/en/?target=StandaloneHub.htm†
-[link2]: http://forum.afero.io/
+[link1]: https://developer.afero.io/docs/en/?target=StandaloneHub.htm†
+[link2]: https://forum.afero.io/
