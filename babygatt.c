@@ -196,6 +196,7 @@ static int on_read_by_type_resp(conn_info_t *ci, uint8_t *data, int len)
 
                 if (flags & (CHARACTERISTIC_WRITE_CMD | CHARACTERISTIC_WRITE_REQ)) {
                     ka->write_handle = value_handle;
+                    ka->isNoResponse = ((flags & CHARACTERISTIC_WRITE_NO_RESPONSE) ? 1 : 0);
                 } else {
                     ka->read_handle = value_handle;
                     if ((flags & CHARACTERISTIC_NOTIFY) || (flags & CHARACTERISTIC_INDICATE)) {
@@ -290,7 +291,7 @@ static int write_packet(conn_info_t *ci)
     int num_chars;
 
     kattribute_t *kattr = dl_find_attr(ci->d_info, ci->attr_id);
-    buf[0] = ATT_OP_WRITE_REQ;
+    buf[0] = kattr->isNoResponse ? ATT_OP_WRITE_CMD : ATT_OP_WRITE_REQ;
     buf[1] = kattr->write_handle & 0xff;
     buf[2] = kattr->write_handle >> 8;
 
@@ -324,8 +325,10 @@ static int write_packet(conn_info_t *ci)
     // Write successful so increment position
     ci->write_pos += num_chars;
 
-    ci->flags |= CONN_FLAGS_PENDING_OP;
-    ci->pend_cmd = PENDING_COMMAND_WRITE;
+    if (!kattr->isNoResponse) {
+    	ci->flags |= CONN_FLAGS_PENDING_OP;
+    	ci->pend_cmd = PENDING_COMMAND_WRITE;
+    }
     return 0;
 }
 
@@ -483,6 +486,7 @@ int on_data(conn_info_t *ci, uint8_t *data, int len)
                     break;
                 default :
                     if (ci->flags & CONN_FLAGS_PENDING_OP) {
+                        syslog(LOG_ERR, "error for op code %d, error code %d", data[1], data[4]);
                         switch (ci->pend_cmd) {
                             case PENDING_COMMAND_WRITE :
                                 send_cmd("wri %04x %04x %04x", ci->l2cap_fd, ci->attr_id, STATUS_BLUETOOTH_ERROR);

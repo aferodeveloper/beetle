@@ -16,16 +16,18 @@
  * limitations under the License.
  *
  *******************************************************************************/
+
 #include <syslog.h>
 #include <string.h>
 #include <errno.h>
+#include <stdlib.h>
 #include "devicelist.h"
 
 extern int g_debug;
 
 #define MAX_DEVICES 128
 static int s_numDevices=0;
-static device_info_t s_devices[MAX_DEVICES];
+static device_info_t *s_devices[MAX_DEVICES];
 
 #define SECONDS_BETWEEN_CULLINGS 60             /* cull every minute */
 static time_t s_lastCulledTime = 0;
@@ -53,7 +55,7 @@ static int find_by_addr(char *addr, int *insertIndex)
 
     while (hi - lo != 1) {
         int g = lo + (hi - lo) / 2;
-        int comp = strcmp(addr, s_devices[g].addr);
+        int comp = strcmp(addr, s_devices[g]->addr);
         if (comp < 0) {
             hi = g;
         } else if (comp > 0) {
@@ -78,7 +80,7 @@ device_info_t *dl_find_by_addr(char *addr)
     if (i < 0) {
         return NULL;
     }
-    return &s_devices[i];
+    return s_devices[i];
 }
 
 int dl_add_device(char *addr, char addr_type)
@@ -87,7 +89,7 @@ int dl_add_device(char *addr, char addr_type)
     if (s_numDevices > 0) {
         int i = find_by_addr(addr, &iPos);
         if (i >= 0) {
-            s_devices[i].lastSeen = get_mono_time();
+            s_devices[i]->lastSeen = get_mono_time();
             return -1;
         }
     } else {
@@ -97,12 +99,18 @@ int dl_add_device(char *addr, char addr_type)
     if (s_numDevices < MAX_DEVICES) {
         int i;
 
-        /* insert device into the list */
-        for (i = s_numDevices - 1; i >= iPos; i--) {
-            memcpy(&s_devices[i + 1], &s_devices[i], sizeof(device_info_t));
+        device_info_t *di = malloc(sizeof(device_info_t));
+        if (di == NULL) {
+            syslog(LOG_ERR,"Can't add device %s: memory is full", addr);
+            return -1;
         }
 
-        device_info_t *di = &s_devices[iPos];
+        /* insert device into the list */
+        for (i = s_numDevices - 1; i >= iPos; i--) {
+            s_devices[i + 1] = s_devices[i];
+        }
+
+        s_devices[iPos] = di;
 
         /* clear out the device info */
         memset(di, 0, sizeof(device_info_t));
@@ -130,11 +138,13 @@ kattribute_t *dl_find_attr(device_info_t *di, int attr)
     kattribute_t *ka;
 
     if (di == NULL) {
+        syslog(LOG_ERR,"di == NULL");
         return NULL;
     }
 
     ka = di->attributes;
     if (ka == NULL) {
+        syslog(LOG_ERR,"ka == NULL");
         return NULL;
     }
 
@@ -145,6 +155,7 @@ kattribute_t *dl_find_attr(device_info_t *di, int attr)
         ka++;
     }
 
+    syslog(LOG_ERR,"attr %d not found", attr);
     return NULL;
 }
 
@@ -160,14 +171,15 @@ static void cull_devices(void)
     time_t expireTime = t - SECONDS_TO_EXPIRE_DEVICE;
 
     for (i = 0; i < s_numDevices; i++) {
-        if (s_devices[i].lastSeen < expireTime) {
+        if (s_devices[i]->lastSeen < expireTime) {
             numExpired++;
             if (g_debug >= 1) {
-                syslog(LOG_INFO, "expiring addr=%s,numDevices=%d", s_devices[i].addr, s_numDevices - numExpired);
+                syslog(LOG_INFO, "expiring addr=%s,numDevices=%d", s_devices[i]->addr, s_numDevices - numExpired);
             }
+            free(s_devices[i]);
         } else {
             if (i != store) {
-                memcpy(&s_devices[store], &s_devices[i], sizeof(device_info_t));
+                s_devices[store] = s_devices[i];
             }
             store++;
         }

@@ -31,6 +31,7 @@ typedef struct {
     uint16_t read_handle;
     uint16_t read_config_handle;
     uint8_t isIndication;
+    uint8_t isNoResponse;
     uint8_t pad;
 } kattribute_t;
 
