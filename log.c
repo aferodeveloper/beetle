@@ -17,14 +17,26 @@
  *
  *******************************************************************************/
 
-#ifndef __COMMAND_H__
-#define __COMMAND_H__
+#include <errno.h>
+#include <string.h>
+#include "log.h"
 
-#include "beetle.h"
+/* for now, always log at trace */
+int g_debugging = DEBUG_TRACE;
 
-/* line is terminated with a newline '\n' */
-/* returns -1 if the session should end   */
-/* returns 0 otherwise                    */
-int read_and_execute_client_command(int fd, void *context);
+void debug_level_increase(void) {
+    if (g_debugging < DEBUG_TRACE) g_debugging++;
+}
 
-#endif //__COMMAND_H__
+void debug_level_decrease(void) {
+    if (g_debugging > 0) g_debugging--;
+}
+
+void log_failure(char *what) {
+    int err = errno;
+
+    syslog(LOG_ERR, "%s failed: errno=%d, %s", what, err, strerror(err));
+    if (err == ENODEV) {
+        syslog(LOG_EMERG, "bluetooth device disappeared!");
+    }
+}

@@ -1,6 +1,6 @@
 /********************************************************************************
  *
- * Copyright (c) 2016 Afero, Inc.
+ * Copyright 2016-2017 Afero, Inc.
  *
  * Licensed under the MIT license (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a copy of the License
@@ -17,17 +17,20 @@
  *
  *******************************************************************************/
 
-#include <syslog.h>
 #include "connlist.h"
-
-extern int g_debug;
+#include "log.h"
 
 #define MAX_BLE_CONNECTIONS 8
 
 static conn_info_t s_conns[MAX_BLE_CONNECTIONS];
 static int s_num_conns = 0;
 
-conn_info_t *cl_find_by_offset_size(void *search, int offset,int size)
+int cl_size(void)
+{
+    return s_num_conns;
+}
+
+conn_info_t *cl_find_by_offset_size(void *search, int offset, int size)
 {
     int i;
     for (i = 0; i < s_num_conns; i++) {
@@ -55,7 +58,7 @@ conn_info_t *cl_get_unused(void)
 {
     if (s_num_conns < MAX_BLE_CONNECTIONS) {
         // clear the connection data
-        memset(&s_conns[s_num_conns], 0, sizeof(conn_info_t) - CONN_WRITE_BUF_SIZE); // Don't clear big write buffer
+        memset(&s_conns[s_num_conns], 0, sizeof(conn_info_t));
         return &s_conns[s_num_conns++];
     }
     return NULL;
@@ -72,7 +75,7 @@ void cl_free(conn_info_t *ci)
     }
 
     if (i >= s_num_conns) {
-        syslog(LOG_ERR,"can't free connection info; not allocated");
+        ERROR("can't free connection info; not allocated");
         return;
     }
 
@@ -82,7 +85,6 @@ void cl_free(conn_info_t *ci)
     }
 
     s_num_conns--;
-
 }
 
 int cl_get_connecting()
@@ -98,34 +100,20 @@ int cl_get_connecting()
     return r;
 }
 
-
-void cl_foreach_connected(void (*callback)(conn_info_t *ci, void *arg), void *arg)
-{
+void cl_foreach_state(int state, void (*callback)(conn_info_t *ci, void *arg), void *arg) {
     int i;
 
-    if (callback == NULL)
-        return;
-
     for (i = 0; i < s_num_conns; i++) {
-        if (s_conns[i].state == CONN_STATE_CONNECTED) {
-            (callback)(&s_conns[i], arg);
+        if (s_conns[i].state == state) {
+            device_info_t *d_info = s_conns[i].d_info;
+            callback(&s_conns[i], arg);
+            /* callback may have deleted the connection */
+            if (d_info != s_conns[i].d_info) i--;
         }
     }
 }
 
-void cl_init(void)
-{
+void cl_init(void) {
     memset(s_conns, 0, sizeof(s_conns));
+    s_num_conns = 0;
 }
-
-
-void print_connections(void)
-{
-    int i;
-    for (i = 0; i < s_num_conns; i++) {
-        printf ("i = %d state = %d", i, s_conns[i].state);
-        printf ("addr = %s, conn_id = %d\n", s_conns[i].d_info->addr, s_conns[i].conn_id);
-        printf ("l2cap_fd = %d, hci_handle=%d\n\n", s_conns[i].l2cap_fd, s_conns[i].hci_handle);
-    }
-}
-

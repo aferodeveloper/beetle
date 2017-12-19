@@ -1,4 +1,4 @@
-.TH "BEETLE" 1 "05/05/2016" "Afero Developer"
+.TH "BEETLE" 1 "12/12/2017" "Joe George"
 
 
 .SH NAME
@@ -9,7 +9,7 @@
 .SH SYNOPSIS
 
 .P
-\fBbeetle\fR [\-d]
+\fBbeetle\fR [\-d] [\-A <ipaddress>]
 
 .SH DESCRIPTION
 
@@ -23,6 +23,11 @@ hardware and the Afero Hub Software application (hubby).
  \fB\-d\fR
 Launch in background as a daemon. Otherwise, \fBbeetle\fR stays connected
 to the controlling terminal. \fBbeetle\fR typically produces no console output.
+
+.TP
+ \fB\-A <ipaddress>\fR
+Bind to <ipaddress> to listen for connections from \fBhubby\fR. By default, \fBbeetle\fR
+only listens for connections on localhost for security purposes.
 
 .SH BUGS
 

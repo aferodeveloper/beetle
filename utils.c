@@ -1,6 +1,6 @@
 /********************************************************************************
  *
- * Copyright (c) 2016 Afero, Inc.
+ * Copyright 2016-2017 Afero, Inc.
  *
  * Licensed under the MIT license (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a copy of the License
@@ -18,12 +18,14 @@
  *******************************************************************************/
 
 #include <ctype.h>
+#include <errno.h>
 #include <stdint.h>
-#include <syslog.h>
 #include <stdio.h>
-#include "utils.h"
+#include <string.h>
+#include <time.h>
 
-extern int g_debug;
+#include "log.h"
+#include "utils.h"
 
 static const char _hex[] = "0123456789abcdef";
 
@@ -37,7 +39,7 @@ char *data2hex(char *dest, int dest_size, const uint8_t* data, int len)
 {
     int i;
     if (len < 0 || (len * 2 + 1) > dest_size) {
-        syslog(LOG_ERR,"bad len in data2Hex:%d",len);
+        ERROR("bad len in data2Hex:%d", len);
     }
     for (i = 0; i < len; i++) {
         hex(dest + i*2, *data++);
@@ -74,3 +76,18 @@ char *data2hexLE(char* dst, uint8_t* data, int len)
     return dst;
 }
 
+int addr2str(void *addr, char *str)
+{
+    uint8_t *p = (uint8_t *)addr;
+    return sprintf (str, "%02x:%02x:%02x:%02x:%02x:%02x",p[5], p[4], p[3], p[2], p[1], p[0]);
+}
+
+time_t get_mono_time(void) {
+    struct timespec tspec;
+    if (clock_gettime(CLOCK_MONOTONIC, &tspec) < 0) {
+        log_failure("clock_gettime");
+        return 0;
+    } else {
+        return tspec.tv_sec;
+    }
+}

@@ -17,14 +17,10 @@
  *
  *******************************************************************************/
 
-#ifndef __COMMAND_H__
-#define __COMMAND_H__
+#ifndef __CENTRAL_SESSION_H__
+#define __CENTRAL_SESSION_H__
 
-#include "beetle.h"
+int central_session(int clientFd, bhci_t *bhci);
+int cmd_kattributes_c(void *param1, void *param2, void *param3, void *context);
 
-/* line is terminated with a newline '\n' */
-/* returns -1 if the session should end   */
-/* returns 0 otherwise                    */
-int read_and_execute_client_command(int fd, void *context);
-
-#endif //__COMMAND_H__
+#endif // __CENTRAL_SESSION_H__

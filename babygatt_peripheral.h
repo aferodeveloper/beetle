@@ -16,15 +16,9 @@
  * limitations under the License.
  *
  *******************************************************************************/
+#ifndef __BABYGATT_PERIPHERAL_H__
+#define __BABYGATT_PERIPHERAL_H__
 
-#ifndef __COMMAND_H__
-#define __COMMAND_H__
+void on_peripheral_data(uint8_t *data, ssize_t len, int fd);
 
-#include "beetle.h"
-
-/* line is terminated with a newline '\n' */
-/* returns -1 if the session should end   */
-/* returns 0 otherwise                    */
-int read_and_execute_client_command(int fd, void *context);
-
-#endif //__COMMAND_H__
+#endif // __BABYGATT_PERIPHERAL_H__

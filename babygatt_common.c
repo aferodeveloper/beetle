@@ -17,14 +17,9 @@
  *
  *******************************************************************************/
 
-#ifndef __COMMAND_H__
-#define __COMMAND_H__
+#include <stdint.h>
+#include "babygatt_common.h"
 
-#include "beetle.h"
-
-/* line is terminated with a newline '\n' */
-/* returns -1 if the session should end   */
-/* returns 0 otherwise                    */
-int read_and_execute_client_command(int fd, void *context);
-
-#endif //__COMMAND_H__
+uint8_t g_gattAferoUuidPreamble[UUID_PREAMBLE_SIZE] = { GATT_AFERO_UUID_PREAMBLE };
+uint8_t g_gattDfuUuidPreamble[UUID_PREAMBLE_SIZE]   = { GATT_DFU_UUID_PREAMBLE };
+uint8_t g_gattAferoHubServiceUuid[UUID_SIZE]        = { GATT_AFERO_HUB_SERVICE_UUID };

@@ -17,14 +17,26 @@
  *
  *******************************************************************************/
 
-#ifndef __COMMAND_H__
-#define __COMMAND_H__
+#ifndef __PERIPHERAL_SESSION_H__
+#define __PERIPHERAL_SESSION_H__
 
-#include "beetle.h"
+#include "evloop.h"
+#include "hci_beetle.h"
 
-/* line is terminated with a newline '\n' */
-/* returns -1 if the session should end   */
-/* returns 0 otherwise                    */
-int read_and_execute_client_command(int fd, void *context);
+struct peripheral_context {
+    /* l2cap listener */
+    int listen_fd;
 
-#endif //__COMMAND_H__
+    /* any existing hub connection */
+    int connection_fd;
+
+    /* address of connected hub */
+    char addr[BT_ADDR_SIZE];
+
+    bhci_t *bhci;
+    evloop_t *ev;
+};
+
+int peripheral_session(int client_fd, bhci_t *bhci);
+
+#endif // __PERIPHERAL_SESSION_H__

@@ -16,15 +16,12 @@
  * limitations under the License.
  *
  *******************************************************************************/
+#ifndef __BABYGATT_CENTRAL_H__
+#define __BABYGATT_CENTRAL_H__
 
-#ifndef __COMMAND_H__
-#define __COMMAND_H__
+#include "connlist.h"
 
-#include "beetle.h"
+void on_central_data(conn_info_t *ci, uint8_t *data, int len);
+void gatt_fail_any_pending(conn_info_t *ci, int error_code);
 
-/* line is terminated with a newline '\n' */
-/* returns -1 if the session should end   */
-/* returns 0 otherwise                    */
-int read_and_execute_client_command(int fd, void *context);
-
-#endif //__COMMAND_H__
+#endif // __BABYGATT_CENTRAL_H__

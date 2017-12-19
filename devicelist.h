@@ -1,6 +1,6 @@
 /********************************************************************************
  *
- * Copyright (c) 2016 Afero, Inc.
+ * Copyright 2016-2017 Afero, Inc.
  *
  * Licensed under the MIT license (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a copy of the License
@@ -22,8 +22,7 @@
 #include <stdint.h>
 #include <bluetooth/bluetooth.h>
 #include <time.h>
-
-#define BT_ADDR_SIZE   18
+#include "beetle.h"
 
 typedef struct {
     uint16_t attribute_id;          /* 0 if end of list */
@@ -32,7 +31,6 @@ typedef struct {
     uint16_t read_config_handle;
     uint8_t isIndication;
     uint8_t isNoResponse;
-    uint8_t pad;
 } kattribute_t;
 
 typedef struct {
@@ -40,18 +38,20 @@ typedef struct {
     char addr_type;
     char pad;
     time_t lastSeen;
+    int8_t rssi;
     kattribute_t *attributes;
 } device_info_t;
 
 device_info_t *dl_find_by_addr(char *addr);
 
-int dl_add_device(char *addr, char addr_type);
+device_info_t *dl_add_device(char *addr, char addr_type);
 
 kattribute_t *dl_find_attr(device_info_t *di, int attr);
 
 void dl_expire_devices(void);
 
+void dl_debug(void);
+
 // TODO add a clean up
 
 #endif // __DEVICELIST_H__
-
